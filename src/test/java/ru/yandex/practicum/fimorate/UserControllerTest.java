@@ -1,5 +1,6 @@
 package ru.yandex.practicum.fimorate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -8,7 +9,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.yandex.practicum.fimorate.exceptions.BadRequestValidationException;
 import ru.yandex.practicum.fimorate.exceptions.NotFoundValidationException;
 import ru.yandex.practicum.fimorate.model.User;
 import java.time.LocalDate;
@@ -21,15 +21,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 public class UserControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
+    private User user;
+    private User user1;
+    private User user2;
 
     @Autowired
-    ObjectMapper mapper;
+    private MockMvc mockMvc;
 
-    User user = new User("1111@gmail.com", "newlogin", "newname", LocalDate.of(2001, Month.AUGUST, 13));
-    User user1 = new User("2222@mail.ru", "loginone", "nameone", LocalDate.of(2004, Month.DECEMBER, 17));
-    User user2 = new User("3333@yahoomail.com", "logintwo", "nametwo", LocalDate.of(1991, Month.APRIL, 22));
+    @Autowired
+    private ObjectMapper mapper;
+
+    @BeforeEach
+    void beforeEach() {
+        user = new User("1111@gmail.com", "newlogin", "newname", LocalDate.of(2001, Month.AUGUST, 13));
+        user1 = new User("2222@mail.ru", "loginone", "nameone", LocalDate.of(2004, Month.DECEMBER, 17));
+        user2 = new User("3333@yahoomail.com", "logintwo", "nametwo", LocalDate.of(1991, Month.APRIL, 22));
+    }
 
     @DirtiesContext
     @Test
@@ -117,11 +124,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Электронная почта не может быть пустой и должна содержать символ @.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -132,11 +135,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Электронная почта не может быть пустой и должна содержать символ @.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -147,11 +146,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Логин не может быть пустым и содержать пробелы.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -162,11 +157,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Логин не может быть пустым и содержать пробелы.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -191,11 +182,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Дата рождения не может быть в будущем.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext

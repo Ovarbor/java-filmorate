@@ -1,5 +1,6 @@
 package ru.yandex.practicum.fimorate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,15 +23,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 public class FilmControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
+    private Film film1;
+    private Film film2;
+    private Film film3;
 
     @Autowired
-    ObjectMapper mapper;
+    private MockMvc mockMvc;
 
-    Film film1 = new Film("film1", "film1", LocalDate.of(2001, Month.AUGUST, 13), 60);
-    Film film2 = new Film("film2", "film2", LocalDate.of(1992, Month.NOVEMBER, 12), 120);
-    Film film3 = new Film("film3", "film3", LocalDate.of(1960, Month.JANUARY, 27), 30);
+    @Autowired
+    private ObjectMapper mapper;
+
+    @BeforeEach
+    void beforeEach() {
+        film1 = new Film("film1", "film1", LocalDate.of(2001, Month.AUGUST, 13), 60);
+        film2 = new Film("film2", "film2", LocalDate.of(1992, Month.NOVEMBER, 12), 120);
+        film3 = new Film("film3", "film3", LocalDate.of(1960, Month.JANUARY, 27), 30);
+    }
 
     @DirtiesContext
     @Test
@@ -120,11 +128,7 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Название не может быть пустым.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -138,16 +142,12 @@ public class FilmControllerTest {
         for (int i = 0; i < film.getDescription().length(); i++) {
             count++;
         }
-        System.out.println("Количество символов в описании" + count);
+        System.out.println("Количество символов в описании" + " " + count);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/films")
                         .content(mapper.writeValueAsString(film))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Максимальная длина описания — 200 символов.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -175,11 +175,26 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Продолжительность фильма должна быть положительной.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(status().isBadRequest());
+    }
+
+    @DirtiesContext
+    @Test
+    public void updateFilmWithEmptyName() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/films")
+                        .content(mapper.writeValueAsString(film1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
+        film1 = new Film(1, "", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/films")
+                        .content(mapper.writeValueAsString(film1))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @DirtiesContext
@@ -200,29 +215,6 @@ public class FilmControllerTest {
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof NotFoundValidationException))
                 .andExpect(result -> assertEquals("Идентификатор не может быть отрицательным.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
-    }
-
-    @DirtiesContext
-    @Test
-    public void updateFilmWithEmptyName() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/films")
-                        .content(mapper.writeValueAsString(film1))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
-        film1 = new Film(1, "", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put("/films")
-                        .content(mapper.writeValueAsString(film1))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
-                .andExpect(result -> assertEquals("Название не может быть пустым.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 }
