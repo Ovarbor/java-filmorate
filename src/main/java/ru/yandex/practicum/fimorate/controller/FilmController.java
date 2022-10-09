@@ -1,52 +1,68 @@
 package ru.yandex.practicum.fimorate.controller;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.fimorate.exceptions.*;
 import ru.yandex.practicum.fimorate.model.Film;
-
+import ru.yandex.practicum.fimorate.service.FilmService;
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
+@Validated
 public class FilmController {
 
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int filmId = 0;
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
-        film.setId(++filmId);
-        validator(film);
-        log.debug("Фильм сохранён: {}", film.getName());
-        films.put(film.getId(), film);
-        return film;
+    public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
+        Film filmCreated = filmService.create(film);
+        return ResponseEntity.status(201).body(filmCreated);
     }
 
     @PutMapping
-    public Film put(@Valid @RequestBody Film film) {
-        validator(film);
-        log.debug("Фильм с идентификатором " + film.getId() + " изменён {}", film.getName());
-        films.put(film.getId(), film);
-        return film;
+    public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
+        Film filmUpdated = filmService.update(film);
+        return ResponseEntity.ok().body(filmUpdated);
     }
 
     @GetMapping
-    public Collection<Film> findAll() {
-        log.debug("Текущее количество фильмов: {}", films.size());
-        return films.values();
+    public ResponseEntity<Collection<Film>> findAll() {
+        Collection<Film> films  = filmService.findAll();
+        return ResponseEntity.ok().body(films);
     }
 
-    private void validator(Film film) {
-        LocalDate Date = LocalDate.of(1895, Month.DECEMBER, 28);
-        if (film.getId() < 0) {
-            throw new NotFoundValidationException("Идентификатор не может быть отрицательным.");
-        }
-        if (film.getReleaseDate().isBefore(Date)) {
-            throw new BadRequestValidationException("Дата релиза — не раньше 28 декабря 1895 года.");
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Film> getById(@PathVariable Long id) {
+        Film film = filmService.getById(id);
+        return ResponseEntity.ok().body(film);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Void> addLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.addLike(id, userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Void> deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.deleteLike(id, userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<Film>> findPopular(
+            @RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
+        List<Film> popularFilms = filmService.findPopular(count);
+        return ResponseEntity.ok().body(popularFilms);
     }
 }

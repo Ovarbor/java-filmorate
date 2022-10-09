@@ -3,7 +3,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,7 +19,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserControllerTest {
 
     private User user;
@@ -45,7 +48,7 @@ public class UserControllerTest {
                 .post("/users")
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newname"));
@@ -58,11 +61,11 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newname"));
-        user = new User(1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        user = new User(1L,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(mapper.writeValueAsString(user))
@@ -80,11 +83,11 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newname"));
-        user = new User(1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        user = new User(1L,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(mapper.writeValueAsString(user))
@@ -97,7 +100,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("nameone"));
@@ -105,7 +108,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user2))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("nametwo"));
@@ -168,7 +171,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newlogin"));
@@ -193,7 +196,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON));
-        user = new User(-1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        user = new User((long) -1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(mapper.writeValueAsString(user))
@@ -201,7 +204,7 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof NotFoundValidationException))
-                .andExpect(result -> assertEquals("Идентификатор не может быть отрицательным.",
+                .andExpect(result -> assertEquals("Пользователь с таким id не найден",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 }

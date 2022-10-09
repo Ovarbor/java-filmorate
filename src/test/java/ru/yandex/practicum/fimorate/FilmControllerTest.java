@@ -3,13 +3,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.yandex.practicum.fimorate.exceptions.BadRequestValidationException;
+import ru.yandex.practicum.fimorate.exceptions.IllegalRequestException;
 import ru.yandex.practicum.fimorate.exceptions.NotFoundValidationException;
 import ru.yandex.practicum.fimorate.model.Film;
 import java.time.LocalDate;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class FilmControllerTest {
 
     private Film film1;
@@ -47,7 +49,7 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
@@ -60,11 +62,11 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
-        film1 = new Film(1, "FilmAboutMouse", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
+        film1 = new Film(1L, "FilmAboutMouse", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film1))
@@ -83,11 +85,11 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
-        film1 = new Film(1, "FilmAboutMouse", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
+        film1 = new Film(1L, "FilmAboutMouse", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film1))
@@ -101,7 +103,7 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film2))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film2"));
@@ -109,7 +111,7 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film3))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film3"));
@@ -161,7 +163,7 @@ public class FilmControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BadRequestValidationException))
+                        assertTrue(result.getResolvedException() instanceof IllegalRequestException))
                 .andExpect(result -> assertEquals("Дата релиза — не раньше 28 декабря 1895 года.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
@@ -185,11 +187,11 @@ public class FilmControllerTest {
                         .post("/films")
                         .content(mapper.writeValueAsString(film1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
-        film1 = new Film(1, "", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
+        film1 = new Film(1L, "", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film1))
@@ -206,7 +208,7 @@ public class FilmControllerTest {
                 .post("/films")
                 .content(mapper.writeValueAsString(film))
                 .contentType(MediaType.APPLICATION_JSON));
-        film = new Film(-1, "123456", "123456", LocalDate.of(2001, Month.AUGUST, 18), 180);
+        film = new Film((long) -1, "123456", "123456", LocalDate.of(2001, Month.AUGUST, 18), 180);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film))
@@ -214,7 +216,7 @@ public class FilmControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof NotFoundValidationException))
-                .andExpect(result -> assertEquals("Идентификатор не может быть отрицательным.",
+                .andExpect(result -> assertEquals("Пользователь с id не найден",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 }
