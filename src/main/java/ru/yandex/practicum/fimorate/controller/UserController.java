@@ -1,6 +1,6 @@
 package ru.yandex.practicum.fimorate.controller;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,14 +15,10 @@ import java.util.List;
 @RequestMapping("/users")
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
@@ -62,13 +58,11 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public ResponseEntity<Collection<User>> findFriendsById(@PathVariable Long id) {
-        Collection<User> friends = userService.findFriendsById(id);
-        return ResponseEntity.ok().body(friends);
+        return ResponseEntity.ok().body(userService.findFriendsById(id));
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
     public ResponseEntity<List<User>> findCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
-        List<User> commonFriends = userService.findCommonFriends(id, otherId);
-        return ResponseEntity.ok().body(commonFriends);
+        return ResponseEntity.ok().body(userService.findCommonFriends(id, otherId));
     }
 }

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.fimorate.controller;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,14 +14,10 @@ import java.util.*;
 @RequestMapping("/films")
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public class FilmController {
 
     private final FilmService filmService;
-
-    @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
 
     @PostMapping
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
@@ -62,7 +58,6 @@ public class FilmController {
     @GetMapping("/popular")
     public ResponseEntity<List<Film>> findPopular(
             @RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
-        List<Film> popularFilms = filmService.findPopular(count);
-        return ResponseEntity.ok().body(popularFilms);
+        return ResponseEntity.ok().body(filmService.findPopular(count));
     }
 }
