@@ -7,11 +7,9 @@ import ru.yandex.practicum.fimorate.exceptions.NotFoundValidationException;
 import ru.yandex.practicum.fimorate.model.Film;
 import ru.yandex.practicum.fimorate.model.Genre;
 import ru.yandex.practicum.fimorate.model.Mpa;
-import ru.yandex.practicum.fimorate.model.User;
 import ru.yandex.practicum.fimorate.storage.FilmStorage;
 import ru.yandex.practicum.fimorate.storage.GenreStorage;
 import ru.yandex.practicum.fimorate.storage.MpaStorage;
-import ru.yandex.practicum.fimorate.storage.UserStorage;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
@@ -25,7 +23,7 @@ public class FilmService {
     private final MpaStorage mpaStorage;
     private final GenreStorage genreStorage;
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final UserService userService;
     private long filmId = 0;
 
     public Film create(Film film) {
@@ -55,12 +53,12 @@ public class FilmService {
     }
 
     public void addLike(Long id, Long userId) {
-        filmStorage.addLike(getFilmById(id), getUserById(userId));
+        filmStorage.addLike(getFilmById(id), userService.getUserById(userId));
         log.info("Лайк поставлен!");
     }
 
     public void deleteLike(Long id, Long userId) {
-        filmStorage.deleteLike(getFilmById(id), getUserById(userId));
+        filmStorage.deleteLike(getFilmById(id), userService.getUserById(userId));
         log.info("Лайк удалён!");
     }
 
@@ -112,15 +110,9 @@ public class FilmService {
         }
     }
 
-    private Film getFilmById(Long id) {
+    protected Film getFilmById(Long id) {
         return filmStorage
                 .getById(id)
                 .orElseThrow(() -> new NotFoundValidationException("Фильм с id " + id + " не найден"));
-    }
-
-    private User getUserById(Long id) {
-        return userStorage
-                .getById(id)
-                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
     }
 }

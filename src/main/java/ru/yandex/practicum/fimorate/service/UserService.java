@@ -100,7 +100,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + user.getId() + " не найден"));
     }
 
-    private User getUserById(Long id) {
+    protected User getUserById(Long id) {
         return userStorage
                 .getById(id)
                 .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
