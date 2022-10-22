@@ -55,24 +55,12 @@ public class FilmService {
     }
 
     public void addLike(Long id, Long userId) {
-        Film film = filmStorage
-                .getById(id)
-                .orElseThrow(() -> new NotFoundValidationException("Фильм с id " + id + " не найден"));
-        User user = userStorage
-                .getById(userId)
-                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + userId + " не найден"));
-        filmStorage.addLike(film, user);
+        filmStorage.addLike(getFilmById(id), getUserById(userId));
         log.info("Лайк поставлен!");
     }
 
     public void deleteLike(Long id, Long userId) {
-        Film film = filmStorage
-                .getById(id)
-                .orElseThrow(() -> new NotFoundValidationException("Фильм с id " + id + " не найден"));
-        User user = userStorage
-                .getById(userId)
-                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + userId + " не найден"));
-        filmStorage.deleteLike(film, user);
+        filmStorage.deleteLike(getFilmById(id), getUserById(userId));
         log.info("Лайк удалён!");
     }
 
@@ -83,6 +71,7 @@ public class FilmService {
                 .sorted(Comparator.comparing(film -> film.getLikes().size()))
                 .collect(Collectors.toList());
         Collections.reverse(popularFilm);
+        log.debug("Список {} популярных фильмов", count);
         return popularFilm
                 .stream()
                 .limit(count)
@@ -101,17 +90,15 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(Date)) {
             throw new IllegalRequestException("Дата релиза — не раньше 28 декабря 1895 года.");
         }
-        Optional<Film> filmOptional = filmStorage.getById(film.getId());
-        if (filmOptional.isEmpty()) {
-            throw new NotFoundValidationException("Фильм с id " + film.getId() + " не найден");
-        }
+        filmStorage
+                .getById(film.getId())
+                .orElseThrow(() -> new NotFoundValidationException("Фильм с id " + film.getId() + " не найден"));
     }
 
     private void loadMpa(Film film) {
-        Optional<Mpa> mpaOptional = mpaStorage.getById(film.getMpa().getId());
-        if (mpaOptional.isEmpty()) {
-            throw new NotFoundValidationException("Рейтинг MPA с id " + film.getMpa().getId() + " не найден");
-        }
+        Optional<Mpa> mpaOptional = Optional.of(mpaStorage.getById(film.getMpa().getId())
+                .orElseThrow(() -> new NotFoundValidationException("Рейтинг MPA с id " +
+                        film.getMpa().getId() + " не найден")));
         film.setMpa(mpaOptional.get());
     }
 
@@ -119,11 +106,21 @@ public class FilmService {
         Set<Genre> genreSet = new TreeSet<>(film.getGenres());
         film.getGenres().clear();
         for (Genre genre: genreSet) {
-            Optional<Genre> genreOptional = genreStorage.getById(genre.getId());
-            if (genreOptional.isEmpty()) {
-                throw new NotFoundValidationException("Жанр с id " + genre.getId() + " не найден");
-            }
+            Optional<Genre> genreOptional = Optional.of(genreStorage.getById(genre.getId())
+                    .orElseThrow(() -> new NotFoundValidationException("Жанр с id " + genre.getId() + " не найден")));
             film.getGenres().add(genreOptional.get());
         }
+    }
+
+    private Film getFilmById(Long id) {
+        return filmStorage
+                .getById(id)
+                .orElseThrow(() -> new NotFoundValidationException("Фильм с id " + id + " не найден"));
+    }
+
+    private User getUserById(Long id) {
+        return userStorage
+                .getById(id)
+                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
     }
 }

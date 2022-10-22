@@ -66,9 +66,8 @@ public class UserService {
     }
 
     public List<User> findFriendsById(Long id) {
-        User user = userStorage
-                .getById(id)
-                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
+        User user = getUserById(id);
+        log.info("Друг найден");
         return user
                 .getFriends()
                 .stream()
@@ -76,19 +75,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Map<Long, User> validateUsersById(Long firstId, Long secondId) {
+    private Map<Long, User> validateUsersById(Long firstId, Long secondId) {
         if (firstId.equals(secondId)) {
             throw new IllegalRequestException("Id пользователей не должны совпадать");
         }
-        User firstUser = userStorage
-                .getById(firstId)
-                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + firstId + " не найден"));
-        User secondUser = userStorage
-                .getById(secondId)
-                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + secondId + " не найден"));
         Map<Long, User> users = new HashMap<>();
-        users.put(firstId, firstUser);
-        users.put(secondId, secondUser);
+        users.put(firstId, getUserById(firstId));
+        users.put(secondId, getUserById(secondId));
         return users;
     }
 
@@ -98,13 +91,18 @@ public class UserService {
         }
     }
 
-    protected void updateValidator(User user) {
-        Optional<User> userOptional = userStorage.getById(user.getId());
+    private void updateValidator(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        if (userOptional.isEmpty()) {
-            throw new NotFoundValidationException("Пользователь с id " + user.getId() + " не найден");
-        }
+        userStorage
+                .getById(user.getId())
+                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + user.getId() + " не найден"));
+    }
+
+    private User getUserById(Long id) {
+        return userStorage
+                .getById(id)
+                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
     }
 }
