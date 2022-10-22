@@ -15,6 +15,15 @@ import ru.yandex.practicum.fimorate.storage.UserStorage;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import ru.yandex.practicum.fimorate.model.User;
+import ru.yandex.practicum.fimorate.storage.FilmStorage;
+import ru.yandex.practicum.fimorate.storage.UserStorage;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +56,16 @@ public class FilmService {
     public Film getById(Long id) {
         Optional<Film> film = filmStorage.getById(id);
         return film.orElseThrow(() -> new NotFoundValidationException("Фильм с id " + id + " не найден"));
+        log.info("Фильм с id " + film.getId() + " изменён");
+        return filmStorage.put(film);
+    }
+
+    public Film getById(Long id) {
+        if (filmStorage.findAll().contains(filmStorage.getById(id))) {
+            return filmStorage.getById(id);
+        } else {
+            throw new NotFoundValidationException("Фильм с id " + id + " не найден");
+        }
     }
 
     public Collection<Film> findAll() {
@@ -62,6 +81,9 @@ public class FilmService {
                 .getById(userId)
                 .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + userId + " не найден"));
         filmStorage.addLike(film, user);
+        Film film = filmStorage.getById(id);
+        User user = userStorage.getById(userId);
+        film.getLikes().add(user.getId());
         log.info("Лайк поставлен!");
     }
 
@@ -73,6 +95,14 @@ public class FilmService {
                 .getById(userId)
                 .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + userId + " не найден"));
         filmStorage.deleteLike(film, user);
+        User user;
+        Film film = filmStorage.getById(id);
+        if (userStorage.findAll().contains(userStorage.getById(userId))) {
+            user = userStorage.getById(userId);
+        } else {
+            throw new NotFoundValidationException("Пользователь с id " + userId + " не найден");
+        }
+        film.getLikes().remove(user.getId());
         log.info("Лайк удалён!");
     }
 
@@ -124,6 +154,10 @@ public class FilmService {
                 throw new NotFoundValidationException("Жанр с id " + genre.getId() + " не найден");
             }
             film.getGenres().add(genreOptional.get());
+        if (filmStorage.findAll().contains(filmStorage.getById(film.getId()))) {
+            filmStorage.getById(film.getId());
+        } else {
+            throw new NotFoundValidationException("Пользователь с id не найден");
         }
     }
 }

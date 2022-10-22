@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,6 +29,7 @@ public class Film {
     @NotNull
     private Mpa mpa;
     private final Set<Genre> genres = new TreeSet<>();
+    private final Set<Long> likes = new HashSet<>();
 
     public Film(String name, String description, LocalDate releaseDate, long duration, int i, Mpa g) {
         this.name = name;

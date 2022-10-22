@@ -1,9 +1,10 @@
 package ru.yandex.practicum.fimorate.storage;
 import ru.yandex.practicum.fimorate.model.Film;
 import ru.yandex.practicum.fimorate.model.User;
-
 import java.util.Collection;
 import java.util.Optional;
+import ru.yandex.practicum.fimorate.model.Film;
+import java.util.Collection;
 
 public interface FilmStorage {
 
@@ -18,4 +19,6 @@ public interface FilmStorage {
     void addLike(Film film, User user);
 
     void deleteLike(Film film, User user);
+
+    Film getById(Long Id);
 }

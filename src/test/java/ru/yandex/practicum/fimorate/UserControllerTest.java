@@ -213,6 +213,7 @@ public class UserControllerTest {
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof NotFoundValidationException))
                 .andExpect(result -> assertEquals("Пользователь с id " + finalUser.getId() + " не найден",
+                .andExpect(result -> assertEquals("Пользователь с таким id не найден",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 

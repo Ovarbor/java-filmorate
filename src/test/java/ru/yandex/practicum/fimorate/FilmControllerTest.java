@@ -82,6 +82,7 @@ public class FilmControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
         film1 = new Film(1L, "FilmAboutMouse", "VeryGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50, 2, new Mpa(1L, "G"));
+        film1 = new Film(1L, "FilmAboutMouse", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film1))
@@ -105,6 +106,7 @@ public class FilmControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
         film1 = new Film(1L, "FilmAboutMouse", "VeryGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50, 2, new Mpa(1L, "G"));
+        film1 = new Film(1L, "FilmAboutMouse", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film1))
@@ -207,6 +209,7 @@ public class FilmControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("film1"));
         film1 = new Film(1L, "", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50, 4, new Mpa(3L, "PG-13"));
+        film1 = new Film(1L, "", "VertGoodFilm", LocalDate.of(2001, Month.AUGUST, 15), 50);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film1))
@@ -225,6 +228,7 @@ public class FilmControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
         film = new Film((long) -1, "123456", "123456", LocalDate.of(2001, Month.AUGUST, 18), 180, 4, new Mpa(3L, "PG-13"));
         Film finalFilm = film;
+        film = new Film((long) -1, "123456", "123456", LocalDate.of(2001, Month.AUGUST, 18), 180);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/films")
                         .content(mapper.writeValueAsString(film))
@@ -233,6 +237,7 @@ public class FilmControllerTest {
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof NotFoundValidationException))
                 .andExpect(result -> assertEquals("Фильм с id " + finalFilm.getId() + " не найден",
+                .andExpect(result -> assertEquals("Пользователь с id не найден",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
