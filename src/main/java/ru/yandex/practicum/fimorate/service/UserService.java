@@ -26,16 +26,14 @@ public class UserService {
 
     public User update(User user) {
         updateValidator(user);
+        userStorage.put(user);
         log.info("Данные пользователя с id " + user.getId() + " обновлены");
-        return userStorage.put(user);
+        return user;
     }
 
     public User getById(Long id) {
-        if (userStorage.findAll().contains(userStorage.getById(id))) {
-            return userStorage.getById(id);
-        } else {
-            throw new NotFoundValidationException("Пользователь с id " + id + " не найден");
-        }
+        Optional<User> user = userStorage.getById(id);
+        return user.orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
     }
 
     public Collection<User> findAll() {
@@ -45,15 +43,13 @@ public class UserService {
 
     public void addFriend(Long id, Long friendId) {
         Map<Long, User> users = validateUsersById(id, friendId);
-        users.get(id).getFriends().add(friendId);
-        users.get(friendId).getFriends().add(id);
+        userStorage.addFriend(users.get(id), users.get(friendId));
         log.info("Друг добавлен");
     }
 
     public void deleteFriend(Long id, Long friendId) {
         Map<Long, User> users = validateUsersById(id, friendId);
-        users.get(id).getFriends().remove(friendId);
-        users.get(friendId).getFriends().remove(id);
+        userStorage.deleteFriend(users.get(id), users.get(friendId));
         log.info("Друг удалён");
     }
 
@@ -70,35 +66,26 @@ public class UserService {
     }
 
     public List<User> findFriendsById(Long id) {
-        if (userStorage.findAll().contains(userStorage.getById(id))) {
-            User user = userStorage.getById(id);
-            log.info("Друзья найдены");
-            return user
-                    .getFriends()
-                    .stream()
-                    .map(this::getById)
-                    .collect(Collectors.toList());
-        } else {
-            throw new NotFoundValidationException("Пользователь с id " + id + " не найден");
-        }
+        User user = userStorage
+                .getById(id)
+                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + id + " не найден"));
+        return user
+                .getFriends()
+                .stream()
+                .map(this::getById)
+                .collect(Collectors.toList());
     }
 
     public Map<Long, User> validateUsersById(Long firstId, Long secondId) {
-        User firstUser;
-        User secondUser;
         if (firstId.equals(secondId)) {
             throw new IllegalRequestException("Id пользователей не должны совпадать");
         }
-        if (userStorage.findAll().contains(userStorage.getById(firstId))) {
-            firstUser = userStorage.getById(firstId);
-        } else {
-            throw new NotFoundValidationException("Пользователь с id " + firstId + " не найден");
-        }
-        if (userStorage.findAll().contains(userStorage.getById(secondId))) {
-            secondUser = userStorage.getById(secondId);
-        } else {
-            throw new NotFoundValidationException("Пользователь с id " + secondId + " не найден");
-        }
+        User firstUser = userStorage
+                .getById(firstId)
+                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + firstId + " не найден"));
+        User secondUser = userStorage
+                .getById(secondId)
+                .orElseThrow(() -> new NotFoundValidationException("Пользователь с id " + secondId + " не найден"));
         Map<Long, User> users = new HashMap<>();
         users.put(firstId, firstUser);
         users.put(secondId, secondUser);
@@ -112,11 +99,12 @@ public class UserService {
     }
 
     protected void updateValidator(User user) {
+        Optional<User> userOptional = userStorage.getById(user.getId());
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        if (!userStorage.findAll().contains(userStorage.getById(user.getId()))) {
-            throw new NotFoundValidationException("Пользователь с таким id не найден");
+        if (userOptional.isEmpty()) {
+            throw new NotFoundValidationException("Пользователь с id " + user.getId() + " не найден");
         }
     }
 }
