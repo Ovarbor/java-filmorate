@@ -17,4 +17,4 @@ Download zip
 Unpack zip  
 Open app in IntellijIdea  
 Start app from main class  
-Test app with postman tests(collection in postman package)
+Test app with postman tests collection in postman package  
