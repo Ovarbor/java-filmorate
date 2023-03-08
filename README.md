@@ -13,7 +13,7 @@ add or delete friends, also you can like films and get most popular films by lik
   <img src="src/main/resources/Maven.png" title="Maven" alt="Maven" width="40" height="40"/>&nbsp;
 </a>
 <a href="https://www.baeldung.com/spring-jdbc-jdbctemplate">
-  <img src="src/main/resources/JDBC.png" title="JDBC" alt="JDBC" width="40" height="40"/>&nbsp;
+  <img src="src/main/resources/JDBC.png" title="JDBC" alt="JDBC" width="70" height="40"/>&nbsp;
 </a>
 <a href="https://www.h2database.com/html/main.html">
   <img src="src/main/resources/H2.png" title="H2" alt="H2" width="40" height="40"/>&nbsp;
