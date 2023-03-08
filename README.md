@@ -9,7 +9,7 @@ add or delete friends, also you can like films and get most popular films by lik
 Spring boot, Maven, JDBC, H2, Lombok, Mockito
 
 <a href="https://www.java.com/">
-  <img src="C:\Users\Morkovka\Desktop\Иконки программ\Lombok.png" title="Java" alt="Java" width="40" height="40"/>&nbsp;
+  <img src="C:\Users\Morkovka\Desktop\Иконки программ\Lombok.png" title="Java" alt="Java" width="400" height="400"/>&nbsp;
 </a>
 
 ### System requirements:
