@@ -3,7 +3,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -11,14 +12,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.yandex.practicum.fimorate.exceptions.NotFoundValidationException;
 import ru.yandex.practicum.fimorate.model.User;
+import ru.yandex.practicum.fimorate.storage.UserStorage;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import java.util.Objects;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserControllerTest {
 
     private User user;
@@ -30,6 +37,9 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Autowired
+    private UserStorage userStorage;
 
     @BeforeEach
     void beforeEach() {
@@ -45,7 +55,7 @@ public class UserControllerTest {
                 .post("/users")
                 .content(mapper.writeValueAsString(user))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newname"));
@@ -58,11 +68,11 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newname"));
-        user = new User(1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        user = new User(1L,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(mapper.writeValueAsString(user))
@@ -80,11 +90,11 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newname"));
-        user = new User(1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        user = new User(1L,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(mapper.writeValueAsString(user))
@@ -97,7 +107,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user1))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("nameone"));
@@ -105,7 +115,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user2))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("nametwo"));
@@ -168,7 +178,7 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("newlogin"));
@@ -193,7 +203,8 @@ public class UserControllerTest {
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON));
-        user = new User(-1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        user = new User((long) -1,"2@gmail.com", "newlogin2", "newname2", LocalDate.of(2001, Month.AUGUST, 15));
+        User finalUser = user;
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/users")
                         .content(mapper.writeValueAsString(user))
@@ -201,8 +212,76 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof NotFoundValidationException))
-                .andExpect(result -> assertEquals("Идентификатор не может быть отрицательным.",
+                .andExpect(result -> assertEquals("Пользователь с id " + finalUser.getId() + " не найден",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
+
+    @DirtiesContext
+    @Test
+    public void testCommonFriendsGetCommonFriends() throws Exception {
+        user = userStorage.create(user);
+        User friend = userStorage.create(user1);
+        User commonFriend = userStorage.create(user2);
+        userStorage.addFriend(user, commonFriend);
+        userStorage.addFriend(friend, commonFriend);
+        mockMvc.perform(
+                        get(URI.create("/users/" + user.getId() + "/friends/common/" + friend.getId())))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(List.of(commonFriend))));
+    }
+
+    @DirtiesContext
+    @Test
+    public void testUserAndFriendGetFriends() throws Exception {
+        user = userStorage.create(user);
+        User friend = userStorage.create(user1);
+        userStorage.addFriend(user,friend);
+        mockMvc.perform(
+                        get(URI.create("/users/" + user.getId() + "/friends")))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(List.of(friend))));
+    }
+
+    @DirtiesContext
+    @Test
+    public void testUserAndFriendDeleteFriend204() throws Exception {
+        User user = userStorage.create(user1);
+        User friend = userStorage.create(user2);
+        userStorage.addFriend(user,friend);
+        mockMvc.perform(
+                        delete(URI.create("/users/" + user.getId() + "/friends/" + friend.getId())))
+                .andExpect(status().isNoContent());
+        User userFromDB = userStorage.getById(user.getId()).orElseThrow();
+        assertFalse(userFromDB.getFriends().contains(friend.getId()));
+    }
+
+    @DirtiesContext
+    @Test
+    public void testUserAndFriendWithFailIdAddFriend() throws Exception {
+        mockMvc.perform(
+                        put(URI.create("/users/1/friends/-1")))
+                .andExpect(status().isNotFound());
+    }
+
+    @DirtiesContext
+    @Test
+    public void testUserAndFriendAddFriend204() throws Exception {
+        User user = userStorage.create(user1);
+        User friend = userStorage.create(user2);
+        mockMvc.perform(
+                        put(URI.create("/users/" + user.getId() + "/friends/" + friend.getId())))
+                .andExpect(status().isNoContent());
+        User userFromDB = userStorage.getById(user.getId()).orElseThrow();
+        assertTrue(userFromDB.getFriends().contains(friend.getId()));
+    }
+
+    @Test
+    public void testUserWithFailId404() throws Exception {
+        mockMvc.perform(
+                        get(URI.create("/users/-1")))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertEquals("Пользователь с id " + -1 + " не найден",
+                Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 }
 
