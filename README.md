@@ -22,7 +22,7 @@ add or delete friends, also you can like films and get most popular films by lik
   <img src="src/main/resources/Lombok.png" title="Lombok" alt="Lombok" width="40" height="40"/>&nbsp;
 </a>
 <a href="https://site.mockito.org/">
-  <img src="src/main/resources/Mockito.png" title="Mockito" alt="Mockito" width="40" height="70"/>&nbsp;
+  <img src="src/main/resources/Mockito.png" title="Mockito" alt="Mockito" width="70" height="40"/>&nbsp;
 </a>
 
 ### System requirements:
