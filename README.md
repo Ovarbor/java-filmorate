@@ -7,6 +7,7 @@ Spring boot, Maven, JDBC, H2, Lombok, Mockito
 
 # System requirements
 JDK 11 amazon corretto 
+
 IntellijIdea
 
 # Startup instructions
