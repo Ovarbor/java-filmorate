@@ -6,7 +6,7 @@ add or delete friends, also you can like films and get most popular films by lik
 Spring boot, Maven, JDBC, H2, Lombok, Mockito
 
 # System requirements
-JDK 11 amazon corretto 
+JDK 11 amazon corretto  
 IntellijIdea
 
 # Startup instructions
