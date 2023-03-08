@@ -32,8 +32,8 @@ JDK 11 amazon corretto
 IntellijIdea
 
 ### Startup instructions:
-Download zip  
-Unpack zip  
-Open app in IntellijIdea  
-Start app from main class  
-Test app with postman tests collection in postman package  
+1. Download zip
+2. Unpack zip  
+3. Open app in IntellijIdea  
+4. Start app from main class  
+5. Test app with postman tests collection in postman package  
