@@ -3,7 +3,7 @@ Backend service that works with movies and user ratings. You can add, delete, up
 add or delete friends, also you can like films and get most popular films by likes.
 
 ### DB schema:
-![Schema DB](src/main/resources/schema.png width="50")
+![Schema DB](src/main/resources/schema.png)
 
 ### Technology stack:
 Spring boot, Maven, JDBC, H2, Lombok, Mockito
