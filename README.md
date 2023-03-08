@@ -12,6 +12,10 @@ Spring boot, Maven, JDBC, H2, Lombok, Mockito
   <img src="C:\Users\Morkovka\Desktop\Иконки программ\Lombok.png"/>
 </a>
 
+<a href="https://www.docker.com/">
+  <img src="https://github.com/devicons/devicon/blob/master/icons/docker/docker-original-wordmark.svg" title="Docker" alt="Docker" width="40" height="40"/>&nbsp;
+</a>
+
 ### System requirements:
 JDK 11 amazon corretto  
 IntellijIdea
