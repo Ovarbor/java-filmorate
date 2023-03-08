@@ -1,5 +1,4 @@
-## java-filmorate:
-Backend service that works with movies and user ratings. 
+## java-filmorate - backend service that works with movies and user ratings. 
 
 ### Functional:
 You can add, delete, update films and users,
