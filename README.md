@@ -1,5 +1,8 @@
 ### java-filmorate:
-Backend service that works with movies and user ratings. You can add, delete, update films and users,
+Backend service that works with movies and user ratings. 
+
+### Functionl:
+You can add, delete, update films and users,
 add or delete friends, also you can like films and get most popular films by likes.
 
 ### DB schema:
