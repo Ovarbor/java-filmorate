@@ -6,7 +6,6 @@ add or delete friends, also you can like films and get most popular films by lik
 ![Schema DB](src/main/resources/schema.png)
 
 ### Technology stack:
-Spring boot, Maven, JDBC, H2, Lombok, Mockito
 <a href="https://spring.io/">
   <img src="https://github.com/devicons/devicon/blob/master/icons/spring/spring-original-wordmark.svg" title="Spring" alt="Spring" width="40" height="40"/>&nbsp;
 </a>
@@ -24,10 +23,6 @@ Spring boot, Maven, JDBC, H2, Lombok, Mockito
 </a>
 <a href="https://site.mockito.org/">
   <img src="src/main/resources/Mockito.png" title="Mockito" alt="Mockito" width="40" height="40"/>&nbsp;
-</a>
-
-<a href="https://www.docker.com/">
-  <img src="https://github.com/devicons/devicon/blob/master/icons/docker/docker-original-wordmark.svg" title="Docker" alt="Docker" width="40" height="40"/>&nbsp;
 </a>
 
 ### System requirements:
