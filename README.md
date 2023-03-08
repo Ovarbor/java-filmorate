@@ -10,6 +10,9 @@ Spring boot, Maven, JDBC, H2, Lombok, Mockito
 <a href="https://spring.io/">
   <img src="https://github.com/devicons/devicon/blob/master/icons/spring/spring-original-wordmark.svg" title="Spring" alt="Spring" width="40" height="40"/>&nbsp;
 </a>
+<a href="https://maven.apache.org/">
+  <img src="src/main/resources/Maven.png" title="Maven" alt="Maven" width="40" height="40"/>&nbsp;
+</a>
 <a href="https://projectlombok.org/">
   <img src="src/main/resources/Lombok.png" title="Lombok" alt="Lombok" width="40" height="40"/>&nbsp;
 </a>
