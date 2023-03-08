@@ -8,6 +8,10 @@ add or delete friends, also you can like films and get most popular films by lik
 ### Technology stack:
 Spring boot, Maven, JDBC, H2, Lombok, Mockito
 
+<a href="https://www.java.com/" target="_blank">
+  <img src=""C:\Users\Morkovka\Desktop\Иконки программ\Lombok.png"" title="Java" alt="Java" width="40" height="40"/>&nbsp;
+</a>
+
 ### System requirements:
 JDK 11 amazon corretto  
 IntellijIdea
