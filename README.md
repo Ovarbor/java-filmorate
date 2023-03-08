@@ -2,12 +2,12 @@
 Backend service that works with movies and user ratings. You can add, delete, update films and users,
 add or delete friends, also you can like films and get most popular films by likes.
 
-# technology stack
+# Technology stack
 Spring boot, Maven, JDBC, H2, Lombok, Mockito
 
 # System requirements
 JDK 11 amazon corretto
-IntellijIdea
+# IntellijIdea
 
 # Startup instructions
 Download zip
