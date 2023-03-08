@@ -8,8 +8,8 @@ add or delete friends, also you can like films and get most popular films by lik
 ### Technology stack:
 Spring boot, Maven, JDBC, H2, Lombok, Mockito
 
-<a href="https://www.docker.com/">
-  <img src="file:///C:\Users\Morkovka\Desktop\Иконки программ\Lombok.png" title="Docker" alt="Docker" width="40" height="40"/>&nbsp;
+<a href="https://projectlombok.org/">
+  <img src="src/main/resources/Lombok.png" title="Docker" alt="Docker" width="40" height="40"/>&nbsp;
 </a>
 
 <a href="https://www.docker.com/">
