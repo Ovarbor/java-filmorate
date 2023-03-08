@@ -13,6 +13,12 @@ Spring boot, Maven, JDBC, H2, Lombok, Mockito
 <a href="https://maven.apache.org/">
   <img src="src/main/resources/Maven.png" title="Maven" alt="Maven" width="40" height="40"/>&nbsp;
 </a>
+<a href="https://www.baeldung.com/spring-jdbc-jdbctemplate">
+  <img src="src/main/resources/JDBC.png" title="JDBC" alt="JDBC" width="40" height="40"/>&nbsp;
+</a>
+<a>
+  <img src="src/main/resources/H2.png" title="H2" alt="H2" width="40" height="40"/>&nbsp;
+</a>
 <a href="https://projectlombok.org/">
   <img src="src/main/resources/Lombok.png" title="Lombok" alt="Lombok" width="40" height="40"/>&nbsp;
 </a>
