@@ -187,7 +187,7 @@ public class UserControllerTest {
     @DirtiesContext
     @Test
     public void createUserWithAfterBirthday() throws Exception {
-        User user = new User("1111@gmail.com", "newlogin", "newname", LocalDate.of(2022, Month.NOVEMBER, 25));
+        User user = new User("1111@gmail.com", "newlogin", "newname", LocalDate.of(2028, Month.NOVEMBER, 25));
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/users")
                         .content(mapper.writeValueAsString(user))
